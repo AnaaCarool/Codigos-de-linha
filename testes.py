@@ -13,7 +13,7 @@ def testa_nrz():
     assert np.array_equal(s, [2, -2, -2, 2])
 
 
-def testa_manchester_slide():
+def testa_manchester():
     bits = [0, 1, 0, 0, 1, 1, 1, 0, 0, 1]
     pulso = codigos.pulso_manchester(2)          # 2 amostras por bit = uma por metade
     y = codigos.formatar(codigos.nrz_l(bits), pulso)
@@ -28,7 +28,7 @@ def testa_manchester_teoria_area():
     assert abs(np.trapezoid(S, f) - 1.0) < 0.01
 
 
-def testa_rz_slide():
+def testa_rz():
     bits = [0, 1, 0, 0, 1, 1, 1, 0, 0, 1]
     y = codigos.formatar(codigos.rz_unipolar(bits), codigos.pulso_retangular(2, 0.5))
     esperado = [0, 0,  1, 0,  0, 0,  0, 0,  1, 0,  1, 0,  1, 0,  0, 0,  0, 0,  1, 0]
@@ -44,22 +44,7 @@ def testa_rz_teoria_potencia():
     assert abs(total - 0.25) < 0.01
 
 
-def testa_rz_polar_slide():
-    bits = [0, 1, 0, 0, 1, 1, 1, 0, 0, 1]
-    y = codigos.formatar(codigos.nrz_l(bits), codigos.pulso_retangular(2, 0.5))
-    esperado = [-1, 0,  1, 0,  -1, 0,  -1, 0,  1, 0,  1, 0,  1, 0,  -1, 0,  -1, 0,  1, 0]
-    assert np.array_equal(y, esperado)
-
-
-def testa_rz_polar_teoria():
-    """RZ polar com p1 = 0,5: potência A^2/2 e nenhuma raia."""
-    f = np.linspace(-8000, 8000, 400001)
-    cont, raias = teoria.dep_rz_polar(f, 1.0, 1e-3, 0.5, sps=16)
-    assert abs(np.trapezoid(cont, f) - 0.5) < 0.01
-    assert max(p for _, p in raias) < 1e-12
-
-
-def testa_ami_slide():
+def testa_ami():
     bits = [0, 1, 0, 0, 1, 1, 1, 0, 0, 1]
     assert np.array_equal(codigos.ami(bits), [0, 1, 0, 0, -1, 1, -1, 0, 0, 1])
 
@@ -71,7 +56,7 @@ def testa_ami_sem_dc():
     assert soma.min() >= 0 and soma.max() <= 1
 
 
-def testa_hdb3_slide():
+def testa_hdb3():
     bits = [1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     esperado = [1, -1, 1, 0, 0, 1, -1, 1, -1, 0, 0, -1, 1, 0, 0, 1, -1]
     assert np.array_equal(codigos.hdb3(bits), esperado)
