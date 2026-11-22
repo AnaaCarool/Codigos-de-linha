@@ -14,7 +14,8 @@ def P2_retangular(f, Tb, largura=1.0, sps=None):
     |P(f)|^2 de um pulso retangular de altura 1 e duração largura*Tb.
 
     sps=None  -> pulso contínuo: (tau * sinc(f tau))^2
-    sps=int   -> pulso amostrado com sps amostras por bit .
+    sps=int   -> pulso amostrado com sps amostras por bit . Usa o núcleo de Dirichlet, que coincide com o sinc^2 para f muito menor 
+                que fs/2 e corrige o efeito da amostragem perto de fs/2.
     """
     f = np.asarray(f, dtype=float)
     if sps is None:
@@ -73,29 +74,6 @@ def dep_rz_unipolar(f, A, Tb, p1=0.5, sps=None):
     f = np.asarray(f, dtype=float)
     s2 = A ** 2 * p1 * (1 - p1)
     m = A * p1
-    cont = s2 / Tb * P2_retangular(f, Tb, 0.5, sps)
-    fk = np.arange(0, int(np.max(f) * Tb) + 1) / Tb
-    pk = m ** 2 * P2_retangular(fk, Tb, 0.5, sps) / Tb ** 2
-    return cont, [(float(a), float(b)) for a, b in zip(fk, pk)]
-
-
-def dep_rz_polar(f, A, Tb, p1=0.5, sps=None):
-    """
-    RZ polar (pulso de meio bit), bits independentes com P(bit=1) = p1.
-
-    Símbolos a_k = +A ou -A (os mesmos do NRZ-L):
-        média      m  = A (2 p1 - 1)     (zero se p1 = 0,5 -> sem raias)
-        variância  s2 = 4 p1 (1 - p1) A^2
-    Parte contínua:  S(f) = s2 / Tb * |P(f)|^2   (= A^2 Tb/4 * sinc^2(f Tb/2) se p1 = 0,5)
-    Raias em f = k/Tb com potência m^2 |P(k/Tb)|^2 / Tb^2 (só aparecem se p1 != 0,5).
-
-    Comparado ao RZ unipolar: MESMO pulso, outra estatística. Com p1 = 0,5
-    a média é zero e a raia em Rb desaparece, apesar de o sinal ter
-    transição em todo bit.
-    """
-    f = np.asarray(f, dtype=float)
-    s2 = 4 * p1 * (1 - p1) * A ** 2
-    m = A * (2 * p1 - 1)
     cont = s2 / Tb * P2_retangular(f, Tb, 0.5, sps)
     fk = np.arange(0, int(np.max(f) * Tb) + 1) / Tb
     pk = m ** 2 * P2_retangular(fk, Tb, 0.5, sps) / Tb ** 2
