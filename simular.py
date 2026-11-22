@@ -54,9 +54,6 @@ def dep_teorica_ideal(nome, f, A, Tb, largura, sps, p1):
         # aqui a 'raia' é uma LISTA [(freq, potência)]: DC, Rb, 3Rb...
         cont, raias = teoria.dep_rz_unipolar(f, A, Tb, p1=p1, sps=sps)
         return cont, raias, f'teórica RZ unipolar (bits indep., p1 = {p1:.2f})'
-    if nome == 'RZ-polar':
-        cont, raias = teoria.dep_rz_polar(f, A, Tb, p1=p1, sps=sps)
-        return cont, raias, f'teórica RZ polar (bits indep., p1 = {p1:.2f})'
     if nome == 'Manchester':
         return teoria.dep_manchester(f, A, Tb, sps), 0.0, 'teórica Manchester (bits indep.)'
     if nome == 'AMI':
@@ -221,15 +218,14 @@ def main():
             run_max, dens = analise.run_length(y, sps)
 
             # Previsões teóricas
-            p1_teo = p1 if nome in ('NRZ-L', 'RZ', 'RZ-polar') else 0.5
+            p1_teo = p1 if nome in ('NRZ-L', 'RZ') else 0.5
             cont_i, raia_i, rot_i = dep_teorica_ideal(nome, f, A, Tb, largura[nome], sps, p1_teo)
             cont_r, raias_r = teoria.dep_pelos_Rn(f, simb, Tb, pulsos[nome], max_lag=a.segmento)
             ci, ri, _ = dep_teorica_ideal(nome, ff, A, Tb, largura[nome], sps, p1_teo)
             cr, rr = teoria.dep_pelos_Rn(ff, simb, Tb, pulsos[nome], max_lag=a.segmento)
             b90_teo = banda90_de_dep(ci, ri, ff)
             b90_rn = banda90_de_dep(cr, rr, ff)
-            dc_prev = {'NRZ-L': A * (2 * p1 - 1), 'RZ': A * p1 / 2,
-                       'RZ-polar': A * (2 * p1 - 1) / 2}.get(nome, 0.0)
+            dc_prev = {'NRZ-L': A * (2 * p1 - 1), 'RZ': A * p1 / 2,}.get(nome, 0.0)
 
             figura_dep(f, Pw, cont_i, raia_i, rot_i, cont_r, raias_r, dc, Rb, A, Tb,
                        f'{nome} - {ROTULO_FONTE[nome_fonte]}',
