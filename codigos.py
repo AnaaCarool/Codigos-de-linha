@@ -174,8 +174,6 @@ CODIGOS = {
 
     'RZ':    {'codificar': rz_unipolar, 'pulso': lambda sps: pulso_retangular(sps, 0.5)},
 
-    'RZ-polar': {'codificar': nrz_l, 'pulso': lambda sps: pulso_retangular(sps, 0.5)},
-    
     'Manchester': {'codificar': nrz_l, 'pulso': pulso_manchester},
    
     'AMI':   {'codificar': ami,   'pulso': lambda sps: pulso_retangular(sps, 1.0)},
